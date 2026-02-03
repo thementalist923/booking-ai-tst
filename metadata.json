@@ -1,0 +1,5 @@
+{
+  "name": "Nezam - Booking & Management Platform",
+  "description": "A multi-tenant appointment scheduling system with master admin control, provider dashboards, and client booking pages with real-time availability checks.",
+  "requestFramePermissions": []
+}
