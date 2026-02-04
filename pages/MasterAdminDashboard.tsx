@@ -2,8 +2,8 @@
 import React, { useState } from 'react';
 import { Provider, BusinessType } from '../types';
 import { 
-  Plus, User, Search, CheckCircle, XCircle, 
-  ExternalLink, Copy, Check, Lock, Edit3, Save, X 
+  Plus, Search, CheckCircle, XCircle, 
+  ExternalLink, Copy, Check, Edit3, Save, X 
 } from 'lucide-react';
 
 interface MasterAdminDashboardProps {
@@ -78,6 +78,7 @@ export const MasterAdminDashboard: React.FC<MasterAdminDashboardProps> = ({ prov
     
     setProviders(prev => prev.map(p => p.id === id ? { ...p, slug: cleanSlug } : p));
     setEditingProviderId(null);
+    setTempSlug('');
   };
 
   const copyToClipboard = (text: string, id: string) => {
@@ -122,7 +123,7 @@ export const MasterAdminDashboard: React.FC<MasterAdminDashboardProps> = ({ prov
         </div>
         
         <div className="overflow-x-auto">
-          <table className="w-full text-right">
+          <table className="w-full text-right border-collapse">
             <thead className="bg-gray-50 text-gray-600 text-xs font-black uppercase tracking-wider">
               <tr>
                 <th className="p-6">النشاط التجاري</th>
@@ -166,7 +167,7 @@ export const MasterAdminDashboard: React.FC<MasterAdminDashboardProps> = ({ prov
                           <div className="flex gap-1">
                             <button 
                               onClick={() => saveSlug(p.id)} 
-                              className="p-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                              className="p-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors shadow-md"
                               title="حفظ"
                             >
                               <Save size={14} />
@@ -182,7 +183,7 @@ export const MasterAdminDashboard: React.FC<MasterAdminDashboardProps> = ({ prov
                         </div>
                       ) : (
                         <div className="flex items-center gap-2 group">
-                          <span className="text-sm font-black text-indigo-600 bg-indigo-50 px-3 py-1.5 rounded-lg border border-indigo-100">
+                          <span className="text-sm font-black text-indigo-600 bg-indigo-50 px-3 py-1.5 rounded-lg border border-indigo-100 group-hover:border-indigo-300 transition-all">
                             /{p.slug}
                           </span>
                           <button 
