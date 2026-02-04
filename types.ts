@@ -5,6 +5,14 @@ export enum AppointmentStatus {
   REJECTED = 'rejected'
 }
 
+export enum BusinessType {
+  MEDICAL = 'medical',
+  SPORTS = 'sports',
+  BEAUTY = 'beauty',
+  EDUCATION = 'education',
+  OTHER = 'other'
+}
+
 export interface ProviderNotifications {
   pushEnabled: boolean;
   notifyOnNew: boolean;
@@ -22,6 +30,7 @@ export interface Provider {
   id: string;
   name: string;
   businessName: string;
+  businessType: BusinessType;
   slug: string;
   email: string;
   trialEndDate: string;
@@ -50,4 +59,5 @@ export interface User {
   role: 'admin' | 'provider';
   providerId?: string;
   name: string;
+  email: string;
 }
