@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Provider, BusinessType } from '../types';
 import { 
   Plus, User, Search, CheckCircle, XCircle, 
-  ExternalLink, Copy, Check, Lock, Eye, EyeOff, Edit3, Save 
+  ExternalLink, Copy, Check, Lock, Edit3, Save, X 
 } from 'lucide-react';
 
 interface MasterAdminDashboardProps {
@@ -29,7 +29,6 @@ export const MasterAdminDashboard: React.FC<MasterAdminDashboardProps> = ({ prov
   });
 
   const getFullBookingUrl = (slug: string) => {
-    // الحصول على المسار الحالي بدقة بدون الهاش
     let baseUrl = window.location.href.split('#')[0];
     if (!baseUrl.endsWith('/')) baseUrl += '/';
     return `${baseUrl}#/p/${slug}`;
@@ -68,8 +67,15 @@ export const MasterAdminDashboard: React.FC<MasterAdminDashboardProps> = ({ prov
     setTempSlug(p.slug);
   };
 
+  const cancelEditing = () => {
+    setEditingProviderId(null);
+    setTempSlug('');
+  };
+
   const saveSlug = (id: string) => {
     const cleanSlug = tempSlug.trim().toLowerCase().replace(/\s+/g, '-');
+    if (!cleanSlug) return;
+    
     setProviders(prev => prev.map(p => p.id === id ? { ...p, slug: cleanSlug } : p));
     setEditingProviderId(null);
   };
@@ -122,7 +128,7 @@ export const MasterAdminDashboard: React.FC<MasterAdminDashboardProps> = ({ prov
                 <th className="p-6">النشاط التجاري</th>
                 <th className="p-6">رابط الصفحة (Slug)</th>
                 <th className="p-6">الحالة</th>
-                <th className="p-6 text-center">الرابط المباشر</th>
+                <th className="p-6 text-center">الإجراءات</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
@@ -145,23 +151,45 @@ export const MasterAdminDashboard: React.FC<MasterAdminDashboardProps> = ({ prov
                     </td>
                     <td className="p-6">
                       {isEditing ? (
-                        <div className="flex items-center gap-2">
-                          <input 
-                            type="text" 
-                            value={tempSlug}
-                            onChange={(e) => setTempSlug(e.target.value)}
-                            className="p-2 border-2 border-indigo-200 rounded-lg text-xs font-black w-40 outline-none focus:border-indigo-600"
-                          />
-                          <button onClick={() => saveSlug(p.id)} className="p-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
-                            <Save size={14} />
-                          </button>
+                        <div className="flex items-center gap-2 animate-in fade-in slide-in-from-right-2">
+                          <div className="flex items-center bg-white border-2 border-indigo-500 rounded-xl overflow-hidden shadow-sm">
+                            <span className="bg-indigo-50 px-2 text-[10px] font-black text-indigo-400 border-l h-full py-2">/p/</span>
+                            <input 
+                              type="text" 
+                              autoFocus
+                              value={tempSlug}
+                              onChange={(e) => setTempSlug(e.target.value)}
+                              onKeyDown={(e) => e.key === 'Enter' && saveSlug(p.id)}
+                              className="px-3 py-2 text-xs font-black w-32 outline-none"
+                            />
+                          </div>
+                          <div className="flex gap-1">
+                            <button 
+                              onClick={() => saveSlug(p.id)} 
+                              className="p-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                              title="حفظ"
+                            >
+                              <Save size={14} />
+                            </button>
+                            <button 
+                              onClick={cancelEditing} 
+                              className="p-2 bg-gray-200 text-gray-600 rounded-lg hover:bg-gray-300 transition-colors"
+                              title="إلغاء"
+                            >
+                              <X size={14} />
+                            </button>
+                          </div>
                         </div>
                       ) : (
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm font-black text-indigo-600 bg-indigo-50 px-3 py-1.5 rounded-lg">
+                        <div className="flex items-center gap-2 group">
+                          <span className="text-sm font-black text-indigo-600 bg-indigo-50 px-3 py-1.5 rounded-lg border border-indigo-100">
                             /{p.slug}
                           </span>
-                          <button onClick={() => startEditingSlug(p)} className="p-1.5 text-gray-400 hover:text-indigo-600 transition-colors">
+                          <button 
+                            onClick={() => startEditingSlug(p)} 
+                            className="p-1.5 text-gray-400 hover:text-indigo-600 hover:bg-white rounded-lg transition-all opacity-0 group-hover:opacity-100"
+                            title="تعديل الرابط"
+                          >
                             <Edit3 size={14} />
                           </button>
                         </div>
@@ -174,11 +202,11 @@ export const MasterAdminDashboard: React.FC<MasterAdminDashboardProps> = ({ prov
                     </td>
                     <td className="p-6">
                       <div className="flex items-center justify-center gap-3">
-                        <a href={fullUrl} target="_blank" rel="noopener noreferrer" className="p-2.5 text-gray-400 hover:text-indigo-600" title="معاينة الصفحة">
-                          <ExternalLink size={20} />
+                        <a href={fullUrl} target="_blank" rel="noopener noreferrer" className="p-2.5 text-gray-400 hover:text-indigo-600 bg-gray-50 hover:bg-white rounded-xl transition-all" title="معاينة الصفحة">
+                          <ExternalLink size={18} />
                         </a>
-                        <button onClick={() => copyToClipboard(fullUrl, p.id)} className="p-2.5 text-gray-400 hover:text-indigo-600" title="نسخ رابط الحجز">
-                          {copiedId === p.id ? <Check size={20} className="text-green-600" /> : <Copy size={20} />}
+                        <button onClick={() => copyToClipboard(fullUrl, p.id)} className="p-2.5 text-gray-400 hover:text-indigo-600 bg-gray-50 hover:bg-white rounded-xl transition-all" title="نسخ رابط الحجز">
+                          {copiedId === p.id ? <Check size={18} className="text-green-600" /> : <Copy size={18} />}
                         </button>
                       </div>
                     </td>
@@ -203,24 +231,24 @@ export const MasterAdminDashboard: React.FC<MasterAdminDashboardProps> = ({ prov
               <div className="space-y-4">
                 <div className="space-y-1">
                   <label className="text-xs font-black text-gray-500 mr-1">اسم النشاط التجاري</label>
-                  <input type="text" required value={newProvider.businessName} onChange={(e) => setNewProvider({...newProvider, businessName: e.target.value})} className="w-full p-4 bg-gray-50 border-2 border-transparent rounded-2xl focus:border-indigo-500 outline-none font-bold" placeholder="مثال: عيادة النخبة" />
+                  <input type="text" required value={newProvider.businessName} onChange={(e) => setNewProvider({...newProvider, businessName: e.target.value})} className="w-full p-4 bg-gray-50 border-2 border-transparent rounded-2xl focus:border-indigo-500 outline-none font-bold shadow-inner" placeholder="مثال: عيادة النخبة" />
                 </div>
                 <div className="space-y-1">
                   <label className="text-xs font-black text-gray-500 mr-1">رابط الصفحة المخصص (Slug)</label>
-                  <input type="text" value={newProvider.slug} onChange={(e) => setNewProvider({...newProvider, slug: e.target.value})} className="w-full p-4 bg-gray-50 border-2 border-transparent rounded-2xl focus:border-indigo-500 outline-none font-bold" placeholder="elite-clinic" />
+                  <input type="text" value={newProvider.slug} onChange={(e) => setNewProvider({...newProvider, slug: e.target.value})} className="w-full p-4 bg-gray-50 border-2 border-transparent rounded-2xl focus:border-indigo-500 outline-none font-bold shadow-inner" placeholder="elite-clinic" />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1">
                     <label className="text-xs font-black text-gray-500 mr-1">البريد الإلكتروني</label>
-                    <input type="email" required value={newProvider.email} onChange={(e) => setNewProvider({...newProvider, email: e.target.value})} className="w-full p-4 bg-gray-50 border-2 border-transparent rounded-2xl focus:border-indigo-500 outline-none font-bold" placeholder="admin@example.com" />
+                    <input type="email" required value={newProvider.email} onChange={(e) => setNewProvider({...newProvider, email: e.target.value})} className="w-full p-4 bg-gray-50 border-2 border-transparent rounded-2xl focus:border-indigo-500 outline-none font-bold shadow-inner" placeholder="admin@example.com" />
                   </div>
                   <div className="space-y-1">
                     <label className="text-xs font-black text-gray-500 mr-1">كلمة المرور</label>
-                    <input type="text" required value={newProvider.password} onChange={(e) => setNewProvider({...newProvider, password: e.target.value})} className="w-full p-4 bg-gray-50 border-2 border-transparent rounded-2xl focus:border-indigo-500 outline-none font-bold" placeholder="123456" />
+                    <input type="text" required value={newProvider.password} onChange={(e) => setNewProvider({...newProvider, password: e.target.value})} className="w-full p-4 bg-gray-50 border-2 border-transparent rounded-2xl focus:border-indigo-500 outline-none font-bold shadow-inner" placeholder="123456" />
                   </div>
                 </div>
               </div>
-              <button type="submit" className="w-full py-5 bg-indigo-600 text-white rounded-[20px] font-black text-lg shadow-xl shadow-indigo-100">إنشاء الحساب وتفعيل الرابط</button>
+              <button type="submit" className="w-full py-5 bg-indigo-600 text-white rounded-[20px] font-black text-lg shadow-xl shadow-indigo-100 hover:bg-indigo-700 active:scale-95 transition-all">إنشاء الحساب وتفعيل الرابط</button>
             </form>
           </div>
         </div>
