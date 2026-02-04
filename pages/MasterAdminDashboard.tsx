@@ -76,6 +76,13 @@ export const MasterAdminDashboard: React.FC<MasterAdminDashboardProps> = ({ prov
     const cleanSlug = tempSlug.trim().toLowerCase().replace(/\s+/g, '-');
     if (!cleanSlug) return;
     
+    // التحقق من عدم وجود رابط مكرر
+    const isDuplicate = providers.some(p => p.id !== id && p.slug === cleanSlug);
+    if (isDuplicate) {
+      alert('هذا الرابط مستخدم بالفعل، يرجى اختيار رابط آخر.');
+      return;
+    }
+
     setProviders(prev => prev.map(p => p.id === id ? { ...p, slug: cleanSlug } : p));
     setEditingProviderId(null);
     setTempSlug('');
@@ -183,7 +190,7 @@ export const MasterAdminDashboard: React.FC<MasterAdminDashboardProps> = ({ prov
                         </div>
                       ) : (
                         <div className="flex items-center gap-2 group">
-                          <span className="text-sm font-black text-indigo-600 bg-indigo-50 px-3 py-1.5 rounded-lg border border-indigo-100 group-hover:border-indigo-300 transition-all">
+                          <span className="text-sm font-black text-indigo-600 bg-indigo-50 px-3 py-1.5 rounded-lg border border-indigo-100 group-hover:border-indigo-300 transition-all cursor-pointer" onClick={() => startEditingSlug(p)}>
                             /{p.slug}
                           </span>
                           <button 
