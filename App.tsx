@@ -1,21 +1,21 @@
 
 import React, { useState, useEffect } from 'react';
 import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { Layout } from './components/Layout';
-import { LandingPage } from './pages/LandingPage';
-import { MasterAdminDashboard } from './pages/MasterAdminDashboard';
-import { ProviderDashboard } from './pages/ProviderDashboard';
-import { PublicBookingPage } from './pages/PublicBookingPage';
-import { LoginPage } from './pages/LoginPage';
-import { Provider, Appointment, User } from './types';
+import { Layout } from './components/Layout.tsx';
+import { LandingPage } from './pages/LandingPage.tsx';
+import { MasterAdminDashboard } from './pages/MasterAdminDashboard.tsx';
+import { ProviderDashboard } from './pages/ProviderDashboard.tsx';
+import { PublicBookingPage } from './pages/PublicBookingPage.tsx';
+import { LoginPage } from './pages/LoginPage.tsx';
+import { Provider, Appointment, User } from './types.ts';
 
 const App: React.FC = () => {
   const [currentUser, setCurrentUser] = useState<User | null>(() => {
     try {
       const saved = localStorage.getItem('nezam_user');
-      return saved ? JSON.parse(saved) : null;
+      if (saved && saved !== 'undefined') return JSON.parse(saved);
+      return null;
     } catch (e) {
-      console.error("Error parsing user from storage", e);
       return null;
     }
   });
@@ -23,9 +23,9 @@ const App: React.FC = () => {
   const [providers, setProviders] = useState<Provider[]>(() => {
     try {
       const saved = localStorage.getItem('nezam_providers');
-      return saved ? JSON.parse(saved) : [];
+      if (saved && saved !== 'undefined') return JSON.parse(saved);
+      return [];
     } catch (e) {
-      console.error("Error parsing providers from storage", e);
       return [];
     }
   });
@@ -33,9 +33,9 @@ const App: React.FC = () => {
   const [appointments, setAppointments] = useState<Appointment[]>(() => {
     try {
       const saved = localStorage.getItem('nezam_appointments');
-      return saved ? JSON.parse(saved) : [];
+      if (saved && saved !== 'undefined') return JSON.parse(saved);
+      return [];
     } catch (e) {
-      console.error("Error parsing appointments from storage", e);
       return [];
     }
   });
