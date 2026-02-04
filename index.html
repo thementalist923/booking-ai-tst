@@ -11,14 +11,12 @@
       body {
         font-family: 'Cairo', sans-serif;
       }
-      /* إجبار النصوص في حقول الإدخال على اللون الداكن لضمان الوضوح التام */
       input, textarea, select {
-        color: #111827 !important; /* text-gray-900 */
+        color: #111827 !important;
       }
       input::placeholder, textarea::placeholder {
-        color: #6b7280 !important; /* text-gray-500 */
+        color: #6b7280 !important;
       }
-      /* تحسين مظهر التحديد (Autofill) في كروم ليبقى النص واضحاً */
       input:-webkit-autofill,
       input:-webkit-autofill:hover, 
       input:-webkit-autofill:focus {
@@ -40,6 +38,6 @@
 </head>
   <body class="bg-gray-50">
     <div id="root"></div>
-    <script type="module" src="/index.tsx"></script>
+    <script type="module" src="index.tsx"></script>
   </body>
 </html>

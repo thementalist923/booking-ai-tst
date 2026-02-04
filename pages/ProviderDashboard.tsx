@@ -47,10 +47,9 @@ export const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
 
   const getPublicBookingUrl = () => {
     if (!provider?.slug) return '';
-    const origin = window.location.origin;
-    const path = window.location.pathname;
-    const cleanPath = path.endsWith('/') ? path : path + '/';
-    return `${origin}${cleanPath}#/p/${provider.slug}`;
+    let baseUrl = window.location.href.split('#')[0];
+    if (!baseUrl.endsWith('/')) baseUrl += '/';
+    return `${baseUrl}#/p/${provider.slug}`;
   };
 
   const copyUrl = () => {
@@ -111,12 +110,6 @@ export const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
     return matchesFilter && matchesSearch;
   });
 
-  const uniqueClients = Array.from(new Set(providerAppointments.map(a => a.clientPhone))).map(phone => {
-    const clientAppointments = providerAppointments.filter(a => a.clientPhone === phone);
-    const lastApt = clientAppointments.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0];
-    return { name: lastApt.clientName, phone, count: clientAppointments.length, lastDate: lastApt.date };
-  });
-
   const updateStatus = (id: string, status: AppointmentStatus) => {
     setAppointments(prev => prev.map(a => a.id === id ? { ...a, status } : a));
   };
@@ -126,7 +119,7 @@ export const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
   if (selectedClientPhone) {
     const clientApts = providerAppointments.filter(a => a.clientPhone === selectedClientPhone);
     return (
-      <div className="space-y-6">
+      <div className="space-y-6 font-['Cairo']">
         <button onClick={() => setSelectedClientPhone(null)} className="flex items-center gap-2 text-indigo-700 font-black hover:gap-3 transition-all"><ChevronLeft size={20} /> العودة لسجل العملاء</button>
         <div className="bg-white p-10 rounded-[40px] border border-gray-100 shadow-sm">
           <div className="flex items-center gap-6 mb-10">
@@ -168,7 +161,7 @@ export const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
         <div className="bg-white p-3 rounded-[28px] shadow-xl border border-gray-100 flex items-center max-w-full gap-4">
           <div className="hidden md:block">
             <p className="text-[10px] font-black text-gray-400 uppercase">رابط الحجز العام</p>
-            <p className="text-xs font-bold text-indigo-600 truncate max-w-[200px]">{getPublicBookingUrl().replace('https://', '').replace('http://', '')}</p>
+            <p className="text-xs font-bold text-indigo-600 truncate max-w-[200px]">{getPublicBookingUrl().split('#')[1] || '/'}</p>
           </div>
           <div className="flex gap-2">
             <button onClick={copyUrl} className="p-3 bg-indigo-50 text-indigo-700 rounded-2xl hover:bg-indigo-100 transition-all flex items-center gap-2 font-black text-xs">
@@ -199,7 +192,7 @@ export const ProviderDashboard: React.FC<ProviderDashboardProps> = ({
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1 relative">
               <Search className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
-              <input type="text" placeholder="ابحث بالاسم أو رقم الهاتف..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-full pr-14 pl-6 py-4 bg-white border-2 border-transparent rounded-[24px] focus:border-indigo-500 outline-none transition-all shadow-sm font-bold text-gray-900 shadow-inner" />
+              <input type="text" placeholder="ابحث بالاسم أو رقم الهاتف..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-full pr-14 pl-6 py-4 bg-white border-2 border-transparent rounded-[24px] focus:border-indigo-500 outline-none transition-all shadow-sm font-bold text-gray-900" />
             </div>
             <div className="flex bg-gray-100 p-1.5 rounded-[24px]">
               {(['all', AppointmentStatus.PENDING, AppointmentStatus.CONFIRMED] as const).map(f => (

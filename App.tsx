@@ -11,18 +11,33 @@ import { Provider, Appointment, User } from './types';
 
 const App: React.FC = () => {
   const [currentUser, setCurrentUser] = useState<User | null>(() => {
-    const saved = localStorage.getItem('nezam_user');
-    return saved ? JSON.parse(saved) : null;
+    try {
+      const saved = localStorage.getItem('nezam_user');
+      return saved ? JSON.parse(saved) : null;
+    } catch (e) {
+      console.error("Error parsing user from storage", e);
+      return null;
+    }
   });
 
   const [providers, setProviders] = useState<Provider[]>(() => {
-    const saved = localStorage.getItem('nezam_providers');
-    return saved ? JSON.parse(saved) : [];
+    try {
+      const saved = localStorage.getItem('nezam_providers');
+      return saved ? JSON.parse(saved) : [];
+    } catch (e) {
+      console.error("Error parsing providers from storage", e);
+      return [];
+    }
   });
 
   const [appointments, setAppointments] = useState<Appointment[]>(() => {
-    const saved = localStorage.getItem('nezam_appointments');
-    return saved ? JSON.parse(saved) : [];
+    try {
+      const saved = localStorage.getItem('nezam_appointments');
+      return saved ? JSON.parse(saved) : [];
+    } catch (e) {
+      console.error("Error parsing appointments from storage", e);
+      return [];
+    }
   });
 
   useEffect(() => {
@@ -50,7 +65,6 @@ const App: React.FC = () => {
           element={<LoginPage onLogin={setCurrentUser} />} 
         />
         
-        {/* Master Admin Routes */}
         <Route 
           path="/admin/*" 
           element={
@@ -65,7 +79,6 @@ const App: React.FC = () => {
           } 
         />
 
-        {/* Provider Routes */}
         <Route 
           path="/dashboard/*" 
           element={
@@ -83,7 +96,6 @@ const App: React.FC = () => {
           } 
         />
 
-        {/* Public Booking Pages */}
         <Route 
           path="/p/:slug" 
           element={
@@ -94,6 +106,7 @@ const App: React.FC = () => {
             />
           } 
         />
+        <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </HashRouter>
   );

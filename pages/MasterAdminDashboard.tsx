@@ -29,10 +29,10 @@ export const MasterAdminDashboard: React.FC<MasterAdminDashboardProps> = ({ prov
   });
 
   const getFullBookingUrl = (slug: string) => {
-    const origin = window.location.origin;
-    const path = window.location.pathname;
-    const cleanPath = path.endsWith('/') ? path : path + '/';
-    return `${origin}${cleanPath}#/p/${slug}`;
+    // الحصول على المسار الحالي بدقة بدون الهاش
+    let baseUrl = window.location.href.split('#')[0];
+    if (!baseUrl.endsWith('/')) baseUrl += '/';
+    return `${baseUrl}#/p/${slug}`;
   };
 
   const handleAddProvider = (e: React.FormEvent) => {
